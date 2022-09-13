@@ -135,6 +135,6 @@ class PostFormTest(TestCase):
             'posts:add_comment', kwargs={'post_id': self.post.id}),
             data=form_data,
             follow=True,
-            )
+        )
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(Post.objects.count(), comments_count + 1)

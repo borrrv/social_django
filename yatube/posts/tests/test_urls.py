@@ -87,4 +87,4 @@ class PostURLTests(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(
             response, f'/auth/login/?next=/posts/{self.post.id}/comment/'
-            )
+        )

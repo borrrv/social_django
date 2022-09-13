@@ -81,7 +81,7 @@ def post_create(request):
     form = PostForm(
         request.POST,
         files=request.FILES or None,
-        )
+    )
     if request.method == 'POST':
         if form.is_valid():
             form.instance.author = request.user
@@ -106,7 +106,7 @@ def post_edit(request, post_id):
             request.POST or None,
             files=request.FILES or None,
             instance=post,
-            )
+        )
         form.instance.author = request.user
         if form.is_valid():
             form.save()
@@ -144,7 +144,7 @@ def follow_index(request):
     posts = Post.objects.filter(author__following__user=user)
     context = {
         'posts': posts,
-        }
+    }
     context.update(paginator_get(posts, request))
     return render(request, 'posts/follow.html', context)
 
