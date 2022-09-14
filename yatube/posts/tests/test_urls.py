@@ -1,11 +1,13 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase, Client
+from django.test import Client, override_settings, TestCase
 from ..models import Group, Post
 from http import HTTPStatus
 
 User = get_user_model()
+CACHE = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}
 
 
+@override_settings(CAHES=CACHE)
 class PostURLTests(TestCase):
     @classmethod
     def setUpClass(cls):

@@ -1,5 +1,5 @@
+from core.models import CreatedModel
 from django.contrib.auth import get_user_model
-
 from django.db import models
 
 User = get_user_model()
@@ -14,14 +14,10 @@ class Group(models.Model):
         return self.title
 
 
-class Post(models.Model):
+class Post(CreatedModel):
     text = models.TextField(
         'Текст поста',
         help_text='Введите текст поста'
-    )
-    pub_date = models.DateTimeField(
-        'Дата публикации',
-        auto_now_add=True
     )
     author = models.ForeignKey(
         User,
@@ -53,7 +49,7 @@ class Post(models.Model):
         verbose_name_plural = 'Посты'
 
 
-class Comment(models.Model):
+class Comment(CreatedModel):
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
@@ -68,16 +64,12 @@ class Comment(models.Model):
     text = models.TextField(
         'Текст комментария'
     )
-    created = models.DateTimeField(
-        'Дата добавления комментария',
-        auto_now_add=True,
-    )
 
     def __str__(self):
         return self.text
 
     class Meta:
-        ordering = ('-created',)
+        ordering = ('-pub_date',)
 
 
 class Follow(models.Model):
@@ -91,3 +83,11 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name='following',
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_user_and_author'
+            )
+        ]

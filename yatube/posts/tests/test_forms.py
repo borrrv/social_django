@@ -11,9 +11,11 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
+CACHE = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}
 
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
+@override_settings(CACHES=CACHE)
 class PostFormTest(TestCase):
     @classmethod
     def setUpClass(cls):

@@ -1,17 +1,20 @@
 from http import HTTPStatus
-from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.test import Client, override_settings, TestCase
 from django.urls import reverse
 from django import forms
 from django.core.files.uploadedfile import SimpleUploadedFile
-from ..models import Group, Post, Follow
+
+from yatube.settings import CACHES
+from ..models import Group, Post, Follow, User
 from django.core.cache import cache
 # import os
 
+FIRST_PAGE = 10
+SECOND_PAGE = 1
+CACHE = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}
 
-User = get_user_model()
 
-
+@override_settings(CAHES=CACHE)
 class TaskPagesTest(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -257,35 +260,36 @@ class PaginatorTest(TestCase):
     """Paginator index"""
     def test_pagiator_index_first_page(self):
         response = self.client.get(reverse('posts:index'))
-        self.assertEqual(len(response.context['page_obj']), 10)
+        self.assertEqual(len(response.context['page_obj']), FIRST_PAGE)
 
     def test_paginator_index_second_page(self):
         response = self.client.get(reverse('posts:index') + '?page=2')
-        self.assertEqual(len(response.context['page_obj']), 1)
+        self.assertEqual(len(response.context['page_obj']), SECOND_PAGE)
 
     """Paginator group_list"""
     def test_paginator_group_list_first_page(self):
         response = self.client.get(reverse('posts:group_list',
                                            kwargs={'slug': self.group.slug}))
-        self.assertEqual(len(response.context['page_obj']), 10)
+        self.assertEqual(len(response.context['page_obj']), FIRST_PAGE)
 
     def test_paginator_group_list_second_page(self):
         response = self.client.get(reverse(
             'posts:group_list', kwargs={'slug': self.group.slug}) + '?page=2')
-        self.assertEqual(len(response.context['page_obj']), 1)
+        self.assertEqual(len(response.context['page_obj']), SECOND_PAGE)
     """Paginator profile"""
     def test_paginator_profile_first_page(self):
         response = self.client.get(reverse(
             'posts:profile', kwargs={'username': self.post.author.username}))
-        self.assertEqual(len(response.context['page_obj']), 10)
+        self.assertEqual(len(response.context['page_obj']), FIRST_PAGE)
 
     def test_paginator_profile_second_page(self):
         response = self.client.get(reverse(
             'posts:profile', kwargs={'username': self.post.author.username})
             + '?page=2')
-        self.assertEqual(len(response.context['page_obj']), 1)
+        self.assertEqual(len(response.context['page_obj']), SECOND_PAGE)
 
 
+@override_settings(CACHES=CACHES)
 class CacheTest(TestCase):
     @classmethod
     def setUpClass(cls):
